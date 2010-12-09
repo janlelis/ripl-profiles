@@ -1,0 +1,27 @@
+== Description
+This {ripl}[https://github.com/cldwalker/ripl] plugin adds a <tt>--profile</tt> option to ripl that loads profile files in <tt>~/.ripl/profiles/</tt> before ripl starts.
+
+== Install
+Install the gem with:
+
+  gem install ripl-profiles
+
+== Usage
+
+Add to your ~/.riplrc
+
+  require 'ripl/profiles'
+
+You can now call
+
+  ripl --profile colors
+
+which will try to load <tt>~/.ripl/profiles/colors.rb</tt> before starting ripl. You can change the profile path with <tt>Ripl.config[:profiles_prefix]</tt>.
+
+Multiple profiles can be separated with <tt>:</tt> .
+
+To specify which profiles should always get loaded, you can use the <tt>Ripl.config[:profiles_base]</tt> array.
+
+You can also set a default profile with <tt>Ripl.config[:profiles_default]</tt>, which will only be loaded, if no profile option has been passed.
+
+J-_-L
