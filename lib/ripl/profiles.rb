@@ -1,7 +1,7 @@
 require 'ripl'
 
 module Ripl::Profiles
-  VERSION = '0.1.0'
+  VERSION = '0.1.2'
 
   @loaded = []
   
@@ -62,7 +62,7 @@ module Ripl::Profiles
     # add command line option
     def parse_option( option, argv )
       if option =~ /(?:-p|--profile)=?(.*)/
-        Ripl::Profiles.load ($1.empty? ? argv.shift.to_s : $1).split(':')
+        Ripl::Profiles.load( ($1.empty? ? argv.shift.to_s : $1).split(':') )
       else
         super
       end
