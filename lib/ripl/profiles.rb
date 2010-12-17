@@ -33,7 +33,7 @@ module Ripl::Profiles
   # command shortcuts
   module Commands
     def available_profiles
-      Ripl::Profiles.list
+      Ripl::Profiles.available
     end
 
     def load_profile( name )
