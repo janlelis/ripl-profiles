@@ -1,7 +1,7 @@
 require 'ripl'
 
 module Ripl::Profiles
-  VERSION = '0.1.2'
+  VERSION = '0.1.4'
 
   @loaded = []
   
@@ -48,13 +48,16 @@ module Ripl::Profiles
   module Shell
     # load default profile if non is set
     def before_loop
-      super
       if Ripl.config[:profiles_default] && Ripl::Profiles.loaded.empty?
         Ripl::Profiles.load Ripl.config[:profiles_default]
       end
+
       if Ripl.config[:profiles_base]
         Ripl::Profiles.load Ripl.config[:profiles_base]
       end
+
+      # next plugins, load irbrc and make Ripl::Commands available
+      super
     end
   end
  
