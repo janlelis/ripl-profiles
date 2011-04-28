@@ -1,3 +1,6 @@
+== 0.2.0
+* Load profiles before Shell#before_loop (be compatible with ripl-multi_line 0.3.0).
+
 == 0.1.4
 * Load profiles before irbrc.
 

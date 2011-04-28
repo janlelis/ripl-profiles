@@ -1,11 +1,11 @@
 require 'ripl'
 
 module Ripl::Profiles
-  VERSION = '0.1.4'
+  VERSION = '0.2.0'
 
   @loaded = []
   
-  Ripl::Runner::OPTIONS << ['-p', '--profile NAME', 'Use a profile']
+  Ripl::Runner::OPTIONS << ['-p, --profile NAME', 'Use a profile']
 
   class << self
     attr_reader :loaded
@@ -28,6 +28,17 @@ module Ripl::Profiles
         end
       }
     end
+
+    def load_from_config
+      if Ripl.config[:profiles_default] && Ripl::Profiles.loaded.empty?
+        Ripl::Profiles.load Ripl.config[:profiles_default]
+      end
+
+      if Ripl.config[:profiles_base]
+        Ripl::Profiles.load Ripl.config[:profiles_base]
+      end
+    end
+
   end
 
   # command shortcuts
@@ -45,22 +56,6 @@ module Ripl::Profiles
     end
   end
 
-  module Shell
-    # load default profile if non is set
-    def before_loop
-      if Ripl.config[:profiles_default] && Ripl::Profiles.loaded.empty?
-        Ripl::Profiles.load Ripl.config[:profiles_default]
-      end
-
-      if Ripl.config[:profiles_base]
-        Ripl::Profiles.load Ripl.config[:profiles_base]
-      end
-
-      # next plugins, load irbrc and make Ripl::Commands available
-      super
-    end
-  end
- 
   module Runner
     # add command line option
     def parse_option( option, argv )
@@ -73,9 +68,18 @@ module Ripl::Profiles
   end
 end
 
-Ripl::Runner.send :extend,    Ripl::Profiles::Runner
-Ripl::Shell.send :include,    Ripl::Profiles::Shell
-Ripl::Commands.send :include, Ripl::Profiles::Commands
+# hack into Shell#loop to get extra rights (run before before_loop)
+class Ripl::Shell
+  def loop
+    Ripl::Profiles.load_from_config
+    before_loop
+    catch(:ripl_exit) { while(true) do; loop_once; end }
+    after_loop
+  end
+end
+
+Ripl::Runner.extend    Ripl::Profiles::Runner
+Ripl::Commands.include Ripl::Profiles::Commands
 
 Ripl.config[:profiles_prefix]  ||= "~/.ripl/profiles/"
 Ripl.config[:profiles_verbose] ||= false
