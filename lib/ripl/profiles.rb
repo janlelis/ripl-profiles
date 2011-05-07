@@ -1,12 +1,10 @@
 require 'ripl'
 
 module Ripl::Profiles
-  VERSION = '0.2.0'
+  VERSION = '0.2.1'
 
   @loaded = []
   
-  Ripl::Runner::OPTIONS << ['-p, --profile NAME', 'Use a profile']
-
   class << self
     attr_reader :loaded
 
@@ -66,15 +64,15 @@ module Ripl::Profiles
       end
     end
   end
+  Ripl::Runner.add_options ['-p, --profile NAME', 'Use a profile']
 end
 
 # hack into Shell#loop to get extra rights (run before before_loop)
 class Ripl::Shell
+  alias loop_without_profiles loop
   def loop
     Ripl::Profiles.load_from_config
-    before_loop
-    catch(:ripl_exit) { while(true) do; loop_once; end }
-    after_loop
+    loop_without_profiles
   end
 end
 
